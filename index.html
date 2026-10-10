@@ -242,7 +242,7 @@
   <article class="card" aria-live="polite">
     <canvas id="trace" aria-hidden="true"></canvas>
 
-    <section class="panel" id="about" role="tabpanel" aria-labelledby="tab-about">
+    <section class="panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
       <div class="head">
         <h2>About</h2>
         <img class="monogram" src="avatar.jpg" alt="Bader Matar at his University of Glasgow graduation" width="108" height="108">
@@ -254,7 +254,7 @@
       <p>Before that I did a <strong>BSc in Computer Science at the University of Glasgow</strong> on the three-year Fast Route, and built FunRun, a running app that teaches history along the way, which earned a First Class grade.</p>
     </section>
 
-    <section class="panel" id="experience" role="tabpanel" aria-labelledby="tab-experience" hidden>
+    <section class="panel" id="panel-experience" role="tabpanel" aria-labelledby="tab-experience" hidden>
       <h2>Experience</h2>
       <ul class="entries">
         <li class="entry">
@@ -280,7 +280,7 @@
       </ul>
     </section>
 
-    <section class="panel" id="projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
+    <section class="panel" id="panel-projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
       <h2>Projects</h2>
       <ul class="entries">
         <li class="entry">
@@ -314,7 +314,7 @@
       </ul>
     </section>
 
-    <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
+    <section class="panel" id="panel-research" role="tabpanel" aria-labelledby="tab-research" hidden>
       <h2>Research</h2>
       <ul class="entries">
         <li class="entry">
@@ -337,7 +337,7 @@
       </ul>
     </section>
 
-    <section class="panel" id="skills" role="tabpanel" aria-labelledby="tab-skills" hidden>
+    <section class="panel" id="panel-skills" role="tabpanel" aria-labelledby="tab-skills" hidden>
       <h2>Skills</h2>
       <div class="skill-groups">
         <div><h3>Programming and data</h3><div class="tags"><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">NumPy</span><span class="tag">SQL</span><span class="tag">PySpark</span><span class="tag">R</span><span class="tag">C++</span><span class="tag">Java</span><span class="tag">TypeScript</span></div></div>
@@ -376,6 +376,7 @@
   var nav = document.getElementById('tabs');
   var menuBtn = document.getElementById('menuBtn');
 
+  var initial = true;
   function show(id, focus) {
     var found = false;
     tabs.forEach(function (t) {
@@ -383,14 +384,14 @@
       if (on) found = true;
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      var p = document.getElementById(t.dataset.panel);
+      var p = document.getElementById('panel-' + t.dataset.panel);
       p.hidden = !on;
       if (on) { p.classList.remove('enter'); void p.offsetWidth; p.classList.add('enter'); }
     });
     if (!found) return show('about');
     nav.classList.remove('open');
     menuBtn.setAttribute('aria-expanded', 'false');
-    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    if (!initial) { try { history.replaceState(null, '', id === 'about' ? location.pathname : '#' + id); } catch (e) {} }
     if (focus) document.getElementById('tab-' + id).focus();
   }
 
@@ -411,6 +412,9 @@
 
   var start = (location.hash || '').replace('#', '');
   show(tabs.some(function (t) { return t.dataset.panel === start; }) ? start : 'about');
+  initial = false;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
 
   // copy email
   var btn = document.getElementById('copyEmail');
