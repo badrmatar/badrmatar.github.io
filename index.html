@@ -415,6 +415,8 @@
   initial = false;
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
+  window.addEventListener('load', function () { if (!location.hash || location.hash === '#about') window.scrollTo(0, 0); });
+  if (location.hash === '#about') { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
 
   // copy email
   var btn = document.getElementById('copyEmail');
