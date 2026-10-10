@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Bader Matar: machine learning for forecasting and fault detection. MSc AI, University of Sheffield.">
+<meta property="og:title" content="Bader Matar">
+<meta property="og:description" content="Bader Matar: machine learning for forecasting and fault detection. MSc AI, University of Sheffield.">
+<meta property="og:image" content="https://badrmatar.github.io/avatar.jpg">
+<meta property="og:url" content="https://badrmatar.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f3639'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='26' fill='%237fe0cf' text-anchor='middle'%3EBM%3C/text%3E%3C/svg%3E">
+<title>Bader Matar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #06090b;
+    --ink: #f2f6f5;
+    --ink-soft: #c9dad6;
+    --ink-muted: #8fa6a1;
+    --line: #1b2528;
+    --card-top: #0f3639;
+    --card-bottom: #3d8e84;
+    --glow: rgba(72, 170, 156, 0.42);
+    --chip: rgba(255, 255, 255, 0.10);
+    --chip-line: rgba(255, 255, 255, 0.22);
+    --accent: #7fe0cf;
+    --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --body: "Figtree", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+  /* top bar */
+  .bar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 5;
+    background: rgba(6, 9, 11, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .brand { font-family: var(--display); font-size: 19px; letter-spacing: -0.01em; white-space: nowrap; }
+  .brand b { font-weight: 800; }
+  .brand span { font-weight: 600; color: var(--ink-soft); }
+  .menu-btn {
+    display: none;
+    background: none; border: 0; padding: 6px; margin: -6px 0 -6px -6px;
+    color: var(--ink); cursor: pointer;
+  }
+  .menu-btn svg { display: block; }
+  nav.tabs { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  nav.tabs button {
+    font: 500 14px/1 var(--body);
+    color: var(--ink-muted);
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--chip-line); background: var(--chip); }
+  .cv-link {
+    font: 600 14px/1 var(--body);
+    text-decoration: none;
+    color: var(--ground);
+    background: var(--accent);
+    padding: 10px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* stage */
+  main { max-width: 1040px; margin: 0 auto; padding: 56px 20px 24px; }
+  .card {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 44px 44px 40px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--card-bottom) 100%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 0 60px 6px var(--glow), 0 30px 80px -30px rgba(0,0,0,.8);
+    overflow: hidden;
+  }
+  /* faint vibration trace across the card */
+  .card canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .5; }
+  .panel { position: relative; }
+  .panel[hidden] { display: none !important; }
+  .panel.enter { animation: rise .45s ease both; }
+  @keyframes rise { from { opacity: .0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .panel.enter { animation: none; } }
+
+  h1, h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    margin: 0 0 22px;
+    text-wrap: balance;
+  }
+  h2 { font-size: clamp(40px, 7vw, 60px); }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .monogram {
+    flex: none;
+    width: 108px; height: 108px;
+    border-radius: 50%;
+    object-fit: cover;
+    font: 800 38px/1 var(--display);
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    background: radial-gradient(circle at 35% 30%, #2b6d69, #0b2527 75%);
+    border: 3px solid rgba(255,255,255,0.85);
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+  .panel p { margin: 0 0 18px; max-width: 62ch; color: var(--ink); }
+  .panel p.lede { font-size: 21px; line-height: 1.45; }
+  .panel strong { font-weight: 600; }
+  .muted { color: var(--ink-soft) !important; }
+
+  /* lists of entries */
+  .entries { display: grid; gap: 26px; margin: 0; padding: 0; list-style: none; }
+  .entry { display: grid; gap: 6px; }
+  .entry-top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .entry h3 { font: 600 20px/1.3 var(--display); letter-spacing: -0.01em; margin: 0; }
+  .entry .where { color: var(--ink-soft); font-weight: 500; }
+  .when { font: 400 13px/1.4 var(--mono); color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .entry p { margin: 0; color: var(--ink); font-size: 16px; }
+  .entry + .entry { border-top: 1px solid rgba(255,255,255,0.14); padding-top: 24px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag {
+    font: 500 12px/1 var(--mono);
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--chip-line);
+    color: var(--ink);
+  }
+  .links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+  .links a {
+    font: 600 14px/1 var(--body);
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(127,224,207,.45);
+    padding-bottom: 3px;
+  }
+  .links a:hover { border-bottom-color: var(--accent); }
+  .stat { font-family: var(--mono); font-size: 14px; color: var(--accent); }
+
+  /* skills */
+  .skill-groups { display: grid; gap: 22px; }
+  .skill-groups h3 { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 10px; }
+
+  /* contact */
+  .contact { text-align: center; padding: 88px 20px 40px; }
+  .contact h2 { font-size: clamp(38px, 6vw, 56px); margin-bottom: 10px; }
+  .contact p { margin: 0 0 28px; color: var(--ink-soft); font-size: 20px; }
+  .socials { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .socials a, .socials button {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: 500 15px/1 var(--body);
+    color: var(--ink);
+    text-decoration: none;
+    background: #0e1518;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+  }
+  .socials a:hover, .socials button:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .socials svg { width: 18px; height: 18px; fill: currentColor; }
+  .email { font-family: var(--mono); font-size: 14px; }
+  .copied { display: block; margin-top: 12px; min-height: 1.4em; font-size: 14px; color: var(--accent); }
+  footer { text-align: center; color: var(--ink-muted); font-size: 13px; padding: 20px 20px 48px; }
+
+  /* phone */
+  @media (max-width: 760px) {
+    .menu-btn { display: block; }
+    .cv-link { margin-left: auto; }
+    nav.tabs {
+      display: none;
+      position: absolute; left: 0; right: 0; top: 100%;
+      flex-direction: column; gap: 2px;
+      padding: 10px 16px 16px;
+      background: rgba(6, 9, 11, 0.97);
+      border-bottom: 1px solid var(--line);
+    }
+    nav.tabs.open { display: flex; }
+    nav.tabs button { text-align: left; font-size: 17px; padding: 14px; }
+    main { padding-top: 32px; }
+    .card { padding: 30px 22px 28px; border-radius: 18px; }
+    .monogram { width: 76px; height: 76px; font-size: 27px; }
+    .panel p.lede { font-size: 19px; }
+  }
+</style>
+<style>img{max-width:100%} [hidden]{display:none!important}</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <button class="menu-btn" id="menuBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="tabs">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 8h20M3 18h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+    </button>
+    <div class="brand"><span>Bader</span> <b>Matar</b></div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tab-about" data-panel="about" aria-selected="true">About</button>
+      <button role="tab" id="tab-experience" data-panel="experience" aria-selected="false">Experience</button>
+      <button role="tab" id="tab-projects" data-panel="projects" aria-selected="false">Projects</button>
+      <button role="tab" id="tab-research" data-panel="research" aria-selected="false">Research</button>
+      <button role="tab" id="tab-skills" data-panel="skills" aria-selected="false">Skills</button>
+    </nav>
+    <a class="cv-link" href="https://www.linkedin.com/in/bader-matar-500a65231/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</header>
+
+<main>
+  <article class="card" aria-live="polite">
+    <canvas id="trace" aria-hidden="true"></canvas>
+
+    <section class="panel" id="about" role="tabpanel" aria-labelledby="tab-about">
+      <div class="head">
+        <h2>About</h2>
+        <img class="monogram" src="avatar.jpg" alt="Bader Matar at his University of Glasgow graduation" width="108" height="108">
+      </div>
+      <p class="lede">Hello, I'm Bader Matar.</p>
+      <p>I build machine learning systems that can say how sure they are, from volatility forecasts for financial markets to fault detectors for rotating machinery.</p>
+      <p>Right now I'm also building <strong>supply-chain software for restaurants</strong>, set up and tailored for each client, with the first client already using it.</p>
+      <p>I'm finishing an <strong>MSc in Artificial Intelligence at the University of Sheffield</strong>, where my dissertation is a transformer trained entirely on simulated markets that forecasts volatility on real ones without retraining. A paper based on it is in preparation.</p>
+      <p>Before that I did a <strong>BSc in Computer Science at the University of Glasgow</strong> on the three-year Fast Route, and built FunRun, a running app that teaches history along the way, which earned a First Class grade.</p>
+    </section>
+
+    <section class="panel" id="experience" role="tabpanel" aria-labelledby="tab-experience" hidden>
+      <h2>Experience</h2>
+      <ul class="entries">
+        <li class="entry">
+          <div class="entry-top"><h3>Founder <span class="where">· Restaurant supply-chain software</span></h3><span class="when">2026 – now</span></div>
+          <p>Building supply-chain software for restaurants. Each deployment is set up and tailored per client rather than sold as one-size-fits-all, and the first client is live.</p>
+          <div class="tags"><span class="tag">Founder</span><span class="tag">SaaS</span><span class="tag">Restaurants</span><span class="tag">1 client live</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Software Engineering Intern <span class="where">· MyHome</span></h3><span class="when">Jun – Sep 2024</span></div>
+          <p>Scoped and launched MyHome's first end-to-end online payments with MyFatoorah, covering one-off and recurring billing. It fixed the top customer complaint from user research. Also rebuilt Google Ads targeting from purchase data and added a WhatsApp contact flow.</p>
+          <div class="tags"><span class="tag">Kuwait City</span><span class="tag">Payments</span><span class="tag">Agile · GitLab</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Industry Project Lead <span class="where">· GaelicConnect</span></h3><span class="when">Sep 2023 – May 2024</span></div>
+          <p>Led a five-person Scrum team building a product for a Glasgow start-up, including a recommendation system the client credited with a sales uplift.</p>
+          <div class="tags"><span class="tag">Glasgow</span><span class="tag">Team lead</span><span class="tag">Recommender systems</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Software Engineering Intern <span class="where">· Mesca</span></h3><span class="when">May – Jun 2023</span></div>
+          <p>Delivered a responsive corporate website end to end in four weeks, working directly with the founder to turn business goals into requirements.</p>
+          <div class="tags"><span class="tag">Remote</span><span class="tag">Web</span></div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="panel" id="projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
+      <h2>Projects</h2>
+      <ul class="entries">
+        <li class="entry">
+          <div class="entry-top"><h3>Bearing Fault Diagnostics</h3><span class="when">Sep 2026</span></div>
+          <p>Fault detection and diagnosis on the CWRU bearing vibration dataset. Found a recording artefact that made healthy and faulty data trivially separable and removed it. Showed that accuracy drops from 100% to 38–53% when the test bearing is one the model has never seen, and that envelope features based on bearing physics hold up best. A Gaussian Process detector trained only on healthy data flagged every fault window.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">Gaussian Processes</span><span class="tag">Signal processing</span><span class="tag">Docker · CI</span></div>
+          <div class="links"><a href="https://github.com/badrmatar/bearing-fault-diagnostics" target="_blank" rel="noopener">Code on GitHub</a></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Credit Risk Scoring</h3><span class="when">2026</span></div>
+          <p>A default-risk model with an interactive app deployed on Streamlit. It reaches an AUC-ROC of 0.771.</p>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Streamlit</span><span class="tag">Classification</span></div>
+          <div class="links"><a href="https://github.com/badrmatar/credit-risk-scoring" target="_blank" rel="noopener">Code on GitHub</a></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Bridge Damage Detection <span class="where">· civil engineering collaboration</span></h3><span class="when">Feb – May 2026</span></div>
+          <p>A structural health monitoring project with civil engineers. Using accelerometer data from a laboratory cable-stayed bridge, I built a model that locates where the bridge is damaged, based on frequency response features and a cross-validated random forest across six damage states. The civil engineers and I worked out together which sensor features actually reflect structural damage.</p>
+          <div class="tags"><span class="tag">Civil engineering</span><span class="tag">Structural health monitoring</span><span class="tag">Vibration analysis</span><span class="tag">Random forest</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Scalable ML Pipelines on HPC</h3><span class="when">Apr 2026</span></div>
+          <p>Four PySpark pipelines on the Stanage cluster over the 11M-row HIGGS dataset, 20M MovieLens ratings and 5M UK traffic sensor counts, tuning GLMs and tree ensembles across 162 cross-validated fits.</p>
+          <div class="tags"><span class="tag">PySpark</span><span class="tag">HPC</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>FunRun</h3><span class="when">2025</span></div>
+          <p>My BSc dissertation: a running app that turns everyday runs into interactive history lessons, designed and shipped on iOS and Android. Awarded a First Class grade.</p>
+          <div class="tags"><span class="tag">Mobile</span><span class="tag">iOS · Android</span></div>
+          <div class="links"><a href="https://github.com/badrmatar/FunRun" target="_blank" rel="noopener">Code on GitHub</a></div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="panel" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
+      <h2>Research</h2>
+      <ul class="entries">
+        <li class="entry">
+          <div class="entry-top"><h3>VolPFN <span class="where">· MSc dissertation</span></h3><span class="when">Jun 2026 – now</span></div>
+          <p>A 4.75M-parameter transformer trained only on simulated market data (GARCH, stochastic, rough and regime-switching volatility with jumps). With its weights frozen, it forecasts full return distributions on real markets without retraining.</p>
+          <p>Across 50,000+ market-days on 28 equity indices it beats GARCH-family, smooth-transition and gradient-boosted-tree baselines, with the gains holding after multiple-testing correction. It also transfers to stocks and currencies it never saw in training.</p>
+          <div class="tags"><span class="tag">PyTorch</span><span class="tag">Transformers</span><span class="tag">Forecast evaluation</span><span class="tag">Paper in preparation</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>Safe recalibration of tail-risk forecasts <span class="where">· MSc dissertation</span></h3><span class="when">2026</span></div>
+          <p>A method for recalibrating joint Value-at-Risk and Expected Shortfall forecasts with a guarantee that it never makes them worse, tested on real market data.</p>
+          <div class="tags"><span class="tag">Risk forecasting</span><span class="tag">Backtesting</span></div>
+        </li>
+        <li class="entry">
+          <div class="entry-top"><h3>BabyLM Challenge 2026 <span class="where">· team project</span></h3><span class="when">2026</span></div>
+          <p>Built a small decoder-only language model trained on a child-scale data budget, written up as an IEEE-format paper.</p>
+          <div class="tags"><span class="tag">Language models</span><span class="tag">PyTorch</span></div>
+          <div class="links"><a href="https://github.com/malikali1122/baby-LM-team-" target="_blank" rel="noopener">Code on GitHub</a></div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="panel" id="skills" role="tabpanel" aria-labelledby="tab-skills" hidden>
+      <h2>Skills</h2>
+      <div class="skill-groups">
+        <div><h3>Programming and data</h3><div class="tags"><span class="tag">Python</span><span class="tag">pandas</span><span class="tag">NumPy</span><span class="tag">SQL</span><span class="tag">PySpark</span><span class="tag">R</span><span class="tag">C++</span><span class="tag">Java</span><span class="tag">TypeScript</span></div></div>
+        <div><h3>Machine learning</h3><div class="tags"><span class="tag">PyTorch</span><span class="tag">JAX</span><span class="tag">scikit-learn</span><span class="tag">Transformers</span><span class="tag">Gaussian Processes</span><span class="tag">Anomaly detection</span><span class="tag">Time-series forecasting</span></div></div>
+        <div><h3>Statistics</h3><div class="tags"><span class="tag">Hypothesis testing</span><span class="tag">Bootstrap</span><span class="tag">Diebold–Mariano</span><span class="tag">Multiple-testing correction</span><span class="tag">Forecast backtesting</span><span class="tag">Conformal prediction</span></div></div>
+        <div><h3>Engineering</h3><div class="tags"><span class="tag">Git</span><span class="tag">Docker</span><span class="tag">pytest</span><span class="tag">GitHub Actions</span><span class="tag">Agile / Scrum</span></div></div>
+        <div><h3>Languages</h3><div class="tags"><span class="tag">Arabic · native</span><span class="tag">English · fluent</span></div></div>
+      </div>
+    </section>
+  </article>
+</main>
+
+<section class="contact" aria-labelledby="contact-title">
+  <h2 id="contact-title">Get in touch</h2>
+  <p>Happy to talk about roles, research or ideas.</p>
+  <div class="socials">
+    <a href="https://www.linkedin.com/in/bader-matar-500a65231/" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4V21H3V9.75Zm7 0h3.8v1.54h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V21h-4v-4.98c0-1.19-.02-2.72-1.66-2.72-1.66 0-1.91 1.3-1.91 2.63V21h-4V9.75Z"/></svg>
+      LinkedIn</a>
+    <a href="https://github.com/badrmatar" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+      GitHub</a>
+    <button type="button" id="copyEmail" aria-describedby="copyNote">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm1.4 2L12 12.3 19.6 7H4.4ZM20 8.6l-7.43 5.2a1 1 0 0 1-1.14 0L4 8.6V17h16V8.6Z"/></svg>
+      <span class="email" id="emailText">badr.matar8@gmail.com</span>
+    </button>
+  </div>
+  <span class="copied" id="copyNote" role="status"></span>
+</section>
+
+<footer>© Bader Matar, 2026</footer>
+
+<script>
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('nav.tabs button'));
+  var nav = document.getElementById('tabs');
+  var menuBtn = document.getElementById('menuBtn');
+
+  function show(id, focus) {
+    var found = false;
+    tabs.forEach(function (t) {
+      var on = t.dataset.panel === id;
+      if (on) found = true;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.dataset.panel);
+      p.hidden = !on;
+      if (on) { p.classList.remove('enter'); void p.offsetWidth; p.classList.add('enter'); }
+    });
+    if (!found) return show('about');
+    nav.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    if (focus) document.getElementById('tab-' + id).focus();
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { show(t.dataset.panel); });
+    t.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      show(tabs[(i + d + tabs.length) % tabs.length].dataset.panel, true);
+    });
+  });
+
+  menuBtn.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  var start = (location.hash || '').replace('#', '');
+  show(tabs.some(function (t) { return t.dataset.panel === start; }) ? start : 'about');
+
+  // copy email
+  var btn = document.getElementById('copyEmail');
+  var note = document.getElementById('copyNote');
+  var email = document.getElementById('emailText').textContent;
+  btn.addEventListener('click', function () {
+    function selectText() {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById('emailText'));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      note.textContent = 'Email selected, press copy to take it.';
+    }
+    try {
+      navigator.clipboard.writeText(email).then(function () { note.textContent = 'Email copied.'; }, selectText);
+    } catch (e) { selectText(); }
+  });
+
+  // faint vibration trace drawn on the card: a quiet signal with an occasional impact
+  var cv = document.getElementById('trace');
+  var ctx = cv.getContext('2d');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t0 = 0;
+  function size() {
+    var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.max(1, r.width * dpr); cv.height = Math.max(1, r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function draw(ts) {
+    var w = cv.width / (window.devicePixelRatio > 1 ? Math.min(window.devicePixelRatio, 2) : 1);
+    var h = cv.height / (window.devicePixelRatio > 1 ? Math.min(window.devicePixelRatio, 2) : 1);
+    ctx.clearRect(0, 0, w, h);
+    var base = h - 16, phase = (ts || 0) / 1400;
+    ctx.beginPath();
+    for (var x = 0; x <= w; x += 2) {
+      var u = x / w;
+      var y = Math.sin(u * 44 + phase * 3) * 2.2 + Math.sin(u * 131 - phase * 5) * 1.2;
+      // impacts repeating along the trace, like a bearing defect
+      var k = ((u * 7 + phase * 0.35) % 1);
+      y += Math.exp(-k * 38) * Math.sin(k * 260) * 16;
+      x === 0 ? ctx.moveTo(x, base + y) : ctx.lineTo(x, base + y);
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  size(); window.addEventListener('resize', size);
+  if (reduce) draw(0); else requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
