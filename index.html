@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash === '#about') history.replaceState(null, '', location.pathname + location.search);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Bader Matar: machine learning for forecasting and fault detection. MSc AI, University of Sheffield.">
 <meta property="og:title" content="Bader Matar">
@@ -415,7 +419,10 @@
   initial = false;
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
-  window.addEventListener('load', function () { if (!location.hash || location.hash === '#about') window.scrollTo(0, 0); });
+  function toTop() { if (!location.hash) window.scrollTo(0, 0); }
+  window.addEventListener('load', function () { toTop(); setTimeout(toTop, 300); });
+  window.addEventListener('pageshow', toTop);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(toTop);
   if (location.hash === '#about') { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
 
   // copy email
