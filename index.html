@@ -396,7 +396,8 @@
     nav.classList.remove('open');
     menuBtn.setAttribute('aria-expanded', 'false');
     if (!initial) { try { history.replaceState(null, '', id === 'about' ? location.pathname : '#' + id); } catch (e) {} }
-    if (focus) document.getElementById('tab-' + id).focus();
+    if (focus) document.getElementById('tab-' + id).focus({ preventScroll: true });
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }
 
   tabs.forEach(function (t, i) {
